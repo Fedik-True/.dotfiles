@@ -57,3 +57,48 @@ map("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Enter Normal Mode" })
 map("n", "<leader>r", function()
   require("util.hsl").replace_hex_with_hsl()
 end, { desc = "Replace hex with HSL on this line" })
+
+-- Save & Run a file
+vim.keymap.set("n", "<F5>", function()
+  vim.cmd("write")
+
+  local file = vim.fn.expand("%:p")
+  local dir = vim.fn.expand("%:p:h")
+
+  Snacks.terminal({ "python", file }, {
+    cwd = dir,
+    win = {
+      position = "bottom",
+      height = 0.35,
+    },
+  })
+end, { desc = "Run current Python file" })
+
+-- --- Toggle auto-completion -------------------------------------------------
+local function toggle_completion()
+  local cmp = require("blink.cmp")
+  vim.g.auto_completion_enabled = vim.g.auto_completion_enabled == false
+
+  if not vim.g.auto_completion_enabled then
+    cmp.hide()
+  end
+
+  vim.notify("Completion: " .. (vim.g.auto_completion_enabled and "ON" or "OFF"))
+end
+
+vim.keymap.set("n", "<leader>\\", toggle_completion, { desc = "Toggle completion" })
+vim.keymap.set("i", "<C-\\>", toggle_completion, { desc = "Toggle completion" })
+
+-- Search files from C:\
+vim.keymap.set("n", "<leader>`", function()
+  require("telescope.builtin").find_files({
+    cwd = "C:/",
+  })
+end, { desc = "Find Files - C Drive" })
+
+-- Search files from C:\IT
+vim.keymap.set("n", "<leader>1", function()
+  require("telescope.builtin").find_files({
+    cwd = "C:/IT",
+  })
+end, { desc = "Find FIles - IT Folder" })
